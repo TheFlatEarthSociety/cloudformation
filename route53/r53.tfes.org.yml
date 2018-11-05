@@ -1,7 +1,84 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: r53.tfes.org zone
+Mappings:
+  IRCServers:
+    Atl1:
+      V4: 144.202.16.200
+      V6: 2001:19f0:5401:99c:5400:1ff:febf:8a9b
+    Fra1:
+      V4: 199.247.19.83
+      V6: 2001:19f0:6c01:bfb:5400:1ff:febf:8a78
+    Lon1:
+      V4: 45.77.229.82
+      V6: 2001:19f0:7402:17ce:5400:1ff:febf:8a6a
+    Ord1:
+      V4: 144.202.59.88
+      V6: 2001:19f0:5c01:1cec:5400:1ff:febf:8a8e
 Resources:
   ZoneR53TfesOrg:
     Type: AWS::Route53::HostedZone
     Properties:
-      Name: r53.tfes.org
+      Name: r53.tfes.org.
+  IRCR53TfesOrg:
+    Type: AWS::Route53::RecordSetGroup
+    Properties:
+      HostedZoneId: !Ref ZoneR53TfesOrg
+      RecordSets:
+        - Name: irc.r53.tfes.org.
+          Type: A
+          TTL: 900
+          SetIdentifier: eu
+          GeoLocation:
+            ContinentCode: EU
+          ResourceRecords:
+            - !FindInMap [IRCServers, Fra1, V4]
+            - !FindInMap [IRCServers, Lon1, V4]
+        - Name: irc.r53.tfes.org.
+          Type: AAAA
+          TTL: 900
+          SetIdentifier: eu
+          GeoLocation:
+            ContinentCode: EU
+          ResourceRecords:
+            - !FindInMap [IRCServers, Fra1, V6]
+            - !FindInMap [IRCServers, Lon1, V6]
+        - Name: irc.r53.tfes.org.
+          Type: A
+          TTL: 900
+          SetIdentifier: us
+          GeoLocation:
+            ContinentCode: NA
+          ResourceRecords:
+            - !FindInMap [IRCServers, Atl1, V4]
+            - !FindInMap [IRCServers, Ord1, V4]
+        - Name: irc.r53.tfes.org.
+          Type: AAAA
+          TTL: 900
+          SetIdentifier: us
+          GeoLocation:
+            ContinentCode: NA
+          ResourceRecords:
+            - !FindInMap [IRCServers, Atl1, V6]
+            - !FindInMap [IRCServers, Ord1, V6]
+        - Name: irc.r53.tfes.org.
+          Type: A
+          TTL: 900
+          SetIdentifier: default
+          GeoLocation:
+            CountryCode: "*"
+          ResourceRecords:
+            - !FindInMap [IRCServers, Atl1, V4]
+            - !FindInMap [IRCServers, Fra1, V4]
+            - !FindInMap [IRCServers, Lon1, V4]
+            - !FindInMap [IRCServers, Ord1, V4]
+        - Name: irc.r53.tfes.org.
+          Type: AAAA
+          TTL: 900
+          SetIdentifier: default
+          GeoLocation:
+            CountryCode: "*"
+          ResourceRecords:
+            - !FindInMap [IRCServers, Atl1, V6]
+            - !FindInMap [IRCServers, Fra1, V6]
+            - !FindInMap [IRCServers, Lon1, V6]
+            - !FindInMap [IRCServers, Ord1, V6]
